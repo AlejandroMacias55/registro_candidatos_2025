@@ -262,31 +262,6 @@ export class CandidateFormComponent {
     private router: Router
   ) {}
 
-  // onPositionTypeChange() {
-  //   if (this.candidate.charge === 'magistrados') {
-  //     this.specificPositions = [
-  //       'Magistrado de la Primera Sala Penal',
-  //       'Magistrado de la Segunda Sala Penal',
-  //       'Magistrado de la Sala Civil',
-  //       'Magistrado de la Sala Familiar',
-  //     ];
-  //   } else if (this.candidate.charge === 'tribunal') {
-  //     this.specificPositions = [
-  //       'Magistrado del Tribunal de Disciplina Judicial',
-  //     ];
-  //   }
-  //   else if (this.candidate.charge === 'juzgado') {
-  //     this.specificPositions = [
-  //       'Penal',
-  //       'Civil',
-  //       'Familiar',
-  //       'Mercantil',
-  //       'Mixto'
-  //     ];
-  //   }
-  //   this.candidate.subcharge = '';
-  //   //this.candidate.subcharge2 = '';
-  // }
   onPositionTypeChange() {
     if (this.candidate.charge === "magistrados") {
       this.specificPositions = [
