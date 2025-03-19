@@ -23,9 +23,6 @@ import { Router } from '@angular/router';
             required
             class="form-control"
           />
-        </div>
-
-        <div class="form-group">
           <label for="name">Apellido Paterno:</label>
           <input
             type="father"
@@ -36,6 +33,8 @@ import { Router } from '@angular/router';
             class="form-control"
           />
         </div>
+
+        
         <div class="form-group">
           <label for="name">Apellido Materno:</label>
           <input
@@ -46,8 +45,6 @@ import { Router } from '@angular/router';
             required
             class="form-control"
           />
-        </div>
-        <div class="form-group">
           <label for="name">Clave de Elector</label>
           <input
             type="clave"
@@ -58,6 +55,8 @@ import { Router } from '@angular/router';
             class="form-control"
           />
         </div>
+
+       
         
         <div class="form-group">
           <label for="email">Correo Electrónico:</label>
@@ -156,7 +155,7 @@ import { Router } from '@angular/router';
   `,
   styles: [`
     .container {
-      max-width: 600px;
+      max-width: flex;
       margin: 2rem auto;
       padding: 2rem;
       border-radius: 8px;
@@ -164,10 +163,11 @@ import { Router } from '@angular/router';
     }
     
     .form-control {
-      width: 100%;
+      
+      width: 30%;
       padding: 0.5rem;
       border: 1px solid #ddd;
-      border-radius: 4px;
+      border-radius: 5px;
       margin-top: 0.5rem;
     }
     
@@ -201,7 +201,7 @@ import { Router } from '@angular/router';
     }
 
     .submit-btn {
-      background-color:rgb(91, 223, 135);
+      background-color:rgb(61, 136, 86);
       color: white;
       padding: 0.75rem 1.5rem;
       border: none;
@@ -233,7 +233,7 @@ import { Router } from '@angular/router';
     .modal-content button {
       margin-top: 1rem;
       padding: 0.5rem 1rem;
-      background-color:rgb(145, 210, 221);
+      background-color:rgb(49, 75, 80);
       color: white;
       border: none;
       cursor: pointer;
