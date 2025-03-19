@@ -4,6 +4,7 @@ import { FormsModule } from "@angular/forms";
 import { Candidate } from "../../models/candidate";
 import { CandidateService } from "../../services/candidate.service";
 import { Router } from "@angular/router";
+import Swal from "sweetalert2";
 
 @Component({
   selector: "app-candidate-form",
@@ -133,9 +134,9 @@ import { Router } from "@angular/router";
           </div>
           <button
             type="submit"
-            [disabled]="!candidateForm.form.valid"
+            [disabled]="!isFormValid()" 
             class="submit-btn"
-            [ngClass]="{ 'disabled-btn': !candidateForm.form.valid }"
+            (click)="handleSubmit()">
           >
             Enviar
           </button>
@@ -223,6 +224,11 @@ import { Router } from "@angular/router";
         background-color: #ccc;
         cursor: not-allowed;
       }
+      Swal.fire({
+  title: "Good job!",
+  text: "You clicked the button!",
+  icon: "success"
+});
       .table {
         width: 100%;
         border-collapse: collapse;
@@ -345,6 +351,27 @@ export class CandidateFormComponent {
     this.candidate.subcharge2 = "";
   }
 
+  handleSubmit() {
+    if (!this.isFormValid()) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Debes completar al menos Nombre, Clave de Elector y Cargo.",
+        footer: '<a href="#">Ver más detalles</a>'
+      });
+      return;
+    }
+  
+    // Si el formulario es válido, ejecutar la lógica normal de envío
+    this.onSubmit();
+  }
+
+
+
+  isFormValid(): boolean {
+    return !!(this.candidate.name && this.candidate.electoralKey && this.candidate.charge);
+  }
+
   onSubmit() {
     console.log("Enviando datos del candidato:", this.candidate);
     this.candidateService.submitCandidate(this.candidate).subscribe(
@@ -354,7 +381,12 @@ export class CandidateFormComponent {
         // Guardar en la tabla de registros
         this.registeredCandidates.push({ ...this.candidate });
         // Mostrar mensaje de éxito
-        window.alert("✅ Información enviada correctamente.");
+        Swal.fire({
+          title: "Muy Bien!",
+          text: "La información se ha enviado!",
+          icon: "success"
+        });
+        //window.alert("✅ Información enviada correctamente.");
         // Limpiar todos los campos del formulario
         this.candidate = {
           name: "",

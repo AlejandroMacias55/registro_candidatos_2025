@@ -12,6 +12,6 @@ export class CandidateService {
   constructor(private http: HttpClient) {}
   // Método para enviar un candidato al backend
   submitCandidate(candidate: Candidate): Observable<any> {
-    return this.http.post<any>(this.apiUrl, candidate);
+    return this.http.post<any>(this.apiUrl, candidate, { withCredentials: true });
   }
 }
