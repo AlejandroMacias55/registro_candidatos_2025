@@ -6,5 +6,6 @@ export interface Candidate {
       "mothersLastName": string,
       "charge": string,
       "subcharge": string,
-      "subcharge2": string
+      "subcharge2": string,
+      "phone":string
 }

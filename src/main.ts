@@ -31,7 +31,7 @@ bootstrapApplication(CandidateFormComponent, {
         <h1>Sistema de Registro de Candidatos</h1>
         <div class="header">
           <span class="welcome-text">
-            Bienvenido, {{ (authService.getAuthState() | async)?.user?.username }}
+            Bienvenido {{ (authService.getAuthState() | async)?.user?.username }}
           </span>
           <button class="logout-btn" (click)="logout()">Cerrar Sesión</button>
         </div>

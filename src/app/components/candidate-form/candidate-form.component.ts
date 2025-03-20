@@ -60,6 +60,19 @@ import Swal from "sweetalert2";
               class="form-control"
             />
           </div>
+
+          <div class="form-group">
+            <label for="phone">Numero Telefono:</label>
+            <input
+              type="phone"
+              id="phone"
+              name="phone"
+              [(ngModel)]="candidate.phone"
+              required
+              class="form-control"
+            />
+          </div>
+
           <div class="form-group">
             <label for="email">Correo Electrónico:</label>
             <input
@@ -82,13 +95,13 @@ import Swal from "sweetalert2";
               class="form-control"
             >
               <option value="">Seleccione un tipo</option>
-              <option value="magistrados">
+              <option value="Magistrados">
                 Magistraturas Tribunal Superior de Justicia
               </option>
-              <option value="tribunal">
+              <option value="Tribunal">
                 Magistraturas Tribunal Disciplina Judicial
               </option>
-              <option value="juzgado">Juzgados</option>
+              <option value="Juzgado">Juzgados</option>
             </select>
           </div>
           <div class="form-group" *ngIf="candidate.charge">
@@ -113,8 +126,8 @@ import Swal from "sweetalert2";
           <div
             class="form-group"
             *ngIf="
-              candidate.charge !== 'magistrados' &&
-              candidate.charge !== 'tribunal' &&
+              candidate.charge !== 'Magistrados' &&
+              candidate.charge !== 'Tribunal' &&
               candidate.subcharge
             "
           >
@@ -257,7 +270,9 @@ export class CandidateFormComponent {
     charge: "",
     subcharge: "",
     subcharge2: "",
+    phone:"",
   };
+  
 
   specificPositions: string[] = [];
   subcharge2: string[] = [];
@@ -268,8 +283,25 @@ export class CandidateFormComponent {
     private router: Router
   ) {}
 
+  ngOnInit() {
+    this.loadCandidates();
+  }
+
+  loadCandidates() {
+    this.candidateService.getCandidates().subscribe(
+      (response: Candidate[]) => {
+        this.registeredCandidates = response;
+      },
+      (error) => {
+        console.error('Error al obtener los candidatos', error);
+      }
+    );
+  }
+
+  
+
   onPositionTypeChange() {
-    if (this.candidate.charge === "magistrados") {
+    if (this.candidate.charge === "Magistrados") {
       this.specificPositions = [
         "Magistrado de la Primera Sala Penal",
         "Magistrado de la Segunda Sala Penal",
@@ -278,11 +310,11 @@ export class CandidateFormComponent {
       ];
       this.subcharge2 = []; // No hay segunda categoría para magistraturas
       this.candidate.subcharge2 = ""; // Limpia el campo subcharge2
-    } else if (this.candidate.charge === "tribunal") {
+    } else if (this.candidate.charge === "Tribunal") {
       this.specificPositions = [
         "Magistrado del Tribunal de Disciplina Judicial",
       ];
-    } else if (this.candidate.charge === "juzgado") {
+    } else if (this.candidate.charge === "Juzgado") {
       this.specificPositions = [
         "Penal",
         "Civil",
@@ -369,7 +401,7 @@ export class CandidateFormComponent {
 
 
   isFormValid(): boolean {
-    return !!(this.candidate.name && this.candidate.electoralKey && this.candidate.charge);
+    return !!(this.candidate.name && this.candidate.charge);
   }
 
   onSubmit() {
@@ -386,7 +418,7 @@ export class CandidateFormComponent {
           text: "La información se ha enviado!",
           icon: "success"
         });
-        //window.alert("✅ Información enviada correctamente.");
+        this.loadCandidates(); // Cargar los datos actualizados desde el backend
         // Limpiar todos los campos del formulario
         this.candidate = {
           name: "",
@@ -397,6 +429,7 @@ export class CandidateFormComponent {
           charge: "",
           subcharge: "",
           subcharge2: "",
+          phone:"",
         };
         this.specificPositions = [];
         this.subcharge2 = [];

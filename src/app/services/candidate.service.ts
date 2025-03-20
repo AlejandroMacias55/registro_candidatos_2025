@@ -14,4 +14,8 @@ export class CandidateService {
   submitCandidate(candidate: Candidate): Observable<any> {
     return this.http.post<any>(this.apiUrl, candidate, { withCredentials: true });
   }
+  // Método para traer info candidatos al fronted
+  getCandidates(): Observable<any> {
+    return this.http.get<any>(this.apiUrl, { withCredentials: true });
+  }
 }
