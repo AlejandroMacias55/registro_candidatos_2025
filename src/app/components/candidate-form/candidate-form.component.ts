@@ -149,6 +149,7 @@ import Swal from "sweetalert2";
             type="submit"
             [disabled]="!isFormValid()" 
             class="submit-btn"
+            
             (click)="handleSubmit()">
           >
             Enviar
@@ -288,15 +289,16 @@ export class CandidateFormComponent {
   }
 
   loadCandidates() {
-    this.candidateService.getCandidates().subscribe(
-      (response: Candidate[]) => {
-        this.registeredCandidates = response;
-      },
-      (error) => {
-        console.error('Error al obtener los candidatos', error);
-      }
-    );
-  }
+  this.candidateService.getCandidates().subscribe(
+    (response: Candidate[]) => {
+      console.log("Candidatos obtenidos:", response);
+      this.registeredCandidates = response;
+    },
+    (error) => {
+      console.error("Error al obtener los candidatos", error);
+    }
+  );
+}
 
   
 
@@ -404,8 +406,11 @@ export class CandidateFormComponent {
     return !!(this.candidate.name && this.candidate.charge);
   }
 
+  isSubmitting = false;
+  
   onSubmit() {
-    console.log("Enviando datos del candidato:", this.candidate);
+    if (this.isSubmitting) return; // Evita que se envíe dos veces seguidas
+  this.isSubmitting = true;
     this.candidateService.submitCandidate(this.candidate).subscribe(
       (response) => {
         console.log("Candidato enviado exitosamente", response);
