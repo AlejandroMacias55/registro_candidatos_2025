@@ -7,5 +7,6 @@ export interface Candidate {
       "charge": string,
       "subcharge": string,
       "subcharge2": string,
-      "phone":string
+      "phone":string,
+      "createdBy"?: any[],
 }

@@ -171,6 +171,7 @@ import Swal from "sweetalert2";
               <th>Tipo de Cargo</th>
               <th>Cargo Específico 1</th>
               <th>Cargo Específico 2</th>
+              <th>Creado Por:</th>
             </tr>
           </thead>
           <tbody>
@@ -183,6 +184,7 @@ import Swal from "sweetalert2";
               <td>{{ candidate.charge }}</td>
               <td>{{ candidate.subcharge }}</td>
               <td>{{ candidate.subcharge2 }}</td>
+              <td>{{ candidate.createdBy ? candidate.createdBy[1] : "" }}</td>
             </tr>
           </tbody>
         </table>
@@ -272,6 +274,7 @@ export class CandidateFormComponent {
     subcharge: "",
     subcharge2: "",
     phone:"",
+
   };
   
 
@@ -407,7 +410,7 @@ export class CandidateFormComponent {
   }
 
   isSubmitting = false;
-  
+
   onSubmit() {
     if (this.isSubmitting) return; // Evita que se envíe dos veces seguidas
   this.isSubmitting = true;
