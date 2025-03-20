@@ -85,7 +85,7 @@ import Swal from "sweetalert2";
             />
           </div>
           <div class="form-group">
-            <label for="charge">Tipo de Cargo:</label>
+            <label for="charge">Cargo:</label>
             <select
               id="charge"
               name="charge"
@@ -105,7 +105,7 @@ import Swal from "sweetalert2";
             </select>
           </div>
           <div class="form-group" *ngIf="candidate.charge">
-            <label for="subcharge">Cargo Específico 1:</label>
+            <label for="subcharge">Materia</label>
             <select
               id="subcharge"
               name="subcharge"
@@ -131,7 +131,7 @@ import Swal from "sweetalert2";
               candidate.subcharge
             "
           >
-            <label for="subcharge2">Cargo Específico 2:</label>
+            <label for="subcharge2">Distrito</label>
             <select
               id="subcharge2"
               name="subcharge2"
@@ -168,9 +168,9 @@ import Swal from "sweetalert2";
               <th>Apellido Materno</th>
               <th>Clave de Elector</th>
               <th>Correo</th>
-              <th>Tipo de Cargo</th>
-              <th>Cargo Específico 1</th>
-              <th>Cargo Específico 2</th>
+              <th>Cargo</th>
+              <th>Materia</th>
+              <th>Distrito</th>
               <th>Creado Por:</th>
             </tr>
           </thead>
