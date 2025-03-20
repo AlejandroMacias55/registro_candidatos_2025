@@ -263,6 +263,7 @@ import Swal from "sweetalert2";
     `,
   ],
 })
+
 export class CandidateFormComponent {
   candidate: Candidate = {
     name: "",
@@ -302,6 +303,7 @@ export class CandidateFormComponent {
     }
   );
 }
+
 
   
 
@@ -377,11 +379,11 @@ export class CandidateFormComponent {
         "Juzgado Primero Mixto de Ojocaliente",
         "Juzgado Primero Mixto de Pinos",
         "Juzgado Primero Mixto de Sombrerete",
-        "Juzgado Primero Mixto de Calera",
-        "Juzgado Primero Mixto de Jalpa",
-        "Juzgado Primero Mixto de Pinos",
-        "Juzgado Primero Mixto de Rio Grande",
-        "Juzgado Primero Mixto de Tlaltenango",
+        "Juzgado Segundo Mixto de Calera",
+        "Juzgado Segundo Mixto de Jalpa",
+        "Juzgado Segundo Mixto de Pinos",
+        "Juzgado Segundo Mixto de Rio Grande",
+        "Juzgado Segundo Mixto de Tlaltenango",
       ];
     }
 
@@ -412,8 +414,11 @@ export class CandidateFormComponent {
   isSubmitting = false;
 
   onSubmit() {
+    
+    console.log("Entra al Onsubmint", this.isSubmitting);
+    
     if (this.isSubmitting) return; // Evita que se envíe dos veces seguidas
-  this.isSubmitting = true;
+    this.isSubmitting = true;
     this.candidateService.submitCandidate(this.candidate).subscribe(
       (response) => {
         console.log("Candidato enviado exitosamente", response);
@@ -446,6 +451,9 @@ export class CandidateFormComponent {
       (error) => {
         console.error("Error al enviar candidato", error);
       }
+      
+      
     );
+    
   }
 }
