@@ -441,6 +441,7 @@ export class CandidateFormComponent {
         };
         this.specificPositions = [];
         this.subcharge2 = [];
+        this.isSubmitting=false;
       },
       (error) => {
         console.error("Error al enviar candidato", error);
