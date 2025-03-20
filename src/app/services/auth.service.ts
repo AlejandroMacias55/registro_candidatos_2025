@@ -8,7 +8,7 @@ import { LoginRequest, LoginResponse, AuthState } from '../models/auth.models';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3012/registro_candidatura/api/v1/auth/login'; // Reemplaza con tu URL real
+  private apiUrl = 'https://sistemas/registro_candidatura/api/v1/auth/login'; // Reemplaza con tu URL real
   private authState = new BehaviorSubject<AuthState>({
     isAuthenticated: false
   });
