@@ -415,7 +415,7 @@ export class CandidateFormComponent {
 
   onSubmit() {
     
-    console.log("Entra al Onsubmint", this.isSubmitting);
+    //console.log("Entra al Onsubmint", this.isSubmitting);
     
     if (this.isSubmitting) return; // Evita que se envíe dos veces seguidas
     this.isSubmitting = true;
