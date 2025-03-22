@@ -201,12 +201,10 @@ import Swal from "sweetalert2";
     <div class="modal" *ngIf="showEditModal">
         <div class="modal-content">
         <div class="modal-dialog" role="document">
-          <h3> Editar Candidato</h3>  
+          <h3 class="modal-title"> Editar Candidato</h3>  
           <form (ngSubmit)="updateCandidate()">
             <div class="form-group">
-              <label>
-                id:{{selectedCandidate.id}}
-              </label>
+              
               <label for="editName">Nombre:</label>
               <input
                 type="text"
@@ -345,9 +343,9 @@ import Swal from "sweetalert2";
             <button type="submit" class="submit-btn">Guardar Cambios</button>
             <div class= "botones-malos">
             <button type="button" class="cancel-btn" (click)="closeEditModal()">
-              Cancelar
+              <-Volver
             </button>
-            <button type="button" class="btn-danger" (click)="eliminarCandidato()">Eliminar</button>
+            <button type="button" class="btn-danger" (click)="eliminarCandidato()">Eliminar Registro</button>
             </div>
           </form>
         </div>
@@ -360,19 +358,29 @@ import Swal from "sweetalert2";
       .form-table-container {
         display: flex;
         flex-direction: column;
-        
+        font-size: 0.8rem; /* Reduce el tamaño de la fuente */
         gap: 1rem;
+        
         padding: 1rem;
       }
       .modal-dialog {
        position: fixed;
        width: 600px; /* Ancho del modal */
+       
        top: 50%;
        left: 50%;
-       padding: 3rem;
-       border: 2px solid black;
+       padding: 2rem;
+       
        transform: translate(-50%, -50%);
-       background-color: rgba(185, 236, 166, 0.95);
+       background-color: rgb(228, 228, 228);
+       box-shadow: 0 10px 30px rgba(7, 109, 192, 0.97);
+      }
+      .modal-title{
+        flex-grow: 1;
+        text-align: center; /* Centra el texto del título */
+        font-size: 1.5rem; /* Tamaño de fuente */
+        color:rgb(0, 0, 0); /* Color del texto */
+        margin: 0;
       }
       @media (min-width: 768px) {
         .form-table-container {
@@ -381,11 +389,12 @@ import Swal from "sweetalert2";
         }
       }
       .cancel-btn{
-        background-color: #dc3545;
+        background-color:rgba(122, 221, 130, 0.87);
         cursor: pointer;
         color: white;
         padding: 0.5rem 1.5rem;
         margin-top: 8px;
+        color:rgb(0, 0, 0); /* Color del texto */
       }
       .botones-malos{
         display: flex;
@@ -393,7 +402,7 @@ import Swal from "sweetalert2";
         justify-content: space-between;
       }
       .btn-danger{
-        background-color:rgb(240, 61, 7);
+        background-color:rgb(248, 34, 34);
         cursor: pointer;
         color: white;
         padding: 0.5rem 1.5rem;
@@ -402,11 +411,12 @@ import Swal from "sweetalert2";
       }
 
       .form-container {
-        flex: 1;
-        padding: 1.5rem;
+        flex: .75;
+        padding: 1rem;
         background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+        
+        box-shadow: 0 2px 8px rgba(7, 109, 192, 0.97);
       }
       .table-container {
         flex: 2;
@@ -414,6 +424,7 @@ import Swal from "sweetalert2";
       }
       .form-group {
         margin-bottom: 1rem;
+        
       }
       .form-grupo-grid{
         display: grid;
@@ -436,6 +447,7 @@ import Swal from "sweetalert2";
         border-radius: 4px;
         cursor: pointer;
         width: 100%;
+        text-align: center;
         transition: background-color 0.3s ease;
       }
       .submit-btn:disabled,
