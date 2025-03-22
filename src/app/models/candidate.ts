@@ -1,5 +1,6 @@
 export interface Candidate {
-"name": string,
+      "id": number,
+      "name": string,
       "email": string,
       "electoralKey": string,
       "fathersLastName": string,
