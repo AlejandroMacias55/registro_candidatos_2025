@@ -8,6 +8,7 @@ import { AuthService } from './app/services/auth.service';
 import { CommonModule } from '@angular/common';
 
 
+
 const routes: Routes = [
   {
     path: "captura_candidatura",
@@ -34,6 +35,7 @@ bootstrapApplication(CandidateFormComponent, {
             Bienvenido {{ (authService.getAuthState() | async)?.user?.username }}
           </span>
           <button class="logout-btn" (click)="logout()">Cerrar Sesión</button>
+          
         </div>
         <app-candidate-form></app-candidate-form>
       </ng-container>
@@ -66,6 +68,14 @@ bootstrapApplication(CandidateFormComponent, {
       border-radius: 4px;
       cursor: pointer;
     }
+    .excel-btn {
+      background-color:rgb(15, 105, 30);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
     h1 {
       text-align: center;
       color: #333;
@@ -76,12 +86,17 @@ bootstrapApplication(CandidateFormComponent, {
   imports: [CommonModule, CandidateFormComponent, LoginComponent]
 })
 export class App {
+
   constructor(public authService: AuthService) {}
 
   logout() {
     this.authService.logout();
+    
   }
-}
+
+
+ }
+
 
 bootstrapApplication(App, {
   providers: [

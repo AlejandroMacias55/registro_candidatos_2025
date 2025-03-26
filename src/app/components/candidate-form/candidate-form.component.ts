@@ -2,6 +2,7 @@ import { Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Candidate } from "../../models/candidate";
+import * as XLSX from 'xlsx';
 import { CandidateService } from "../../services/candidate.service";
 import { Router } from "@angular/router";
 import Swal from "sweetalert2";
@@ -181,17 +182,17 @@ import Swal from "sweetalert2";
       <!-- Tabla de Registros -->
       <div class="table-container" *ngIf="registeredCandidates.length > 0">
         <h3>Registros Guardados</h3>
+        <button class="excel-btn" (click)="exportToExcel()">Descargar Excel</button>
         <table class="table">
           <thead>
             <tr>
               <th>Acciones</th>
               <th>Nombre</th>
-              <th>Apellido Paterno</th>
-              <th>Apellido Materno</th>
+            
               <th>Clave de Elector</th>
               <th>Correo</th>
+              <th>Telefono</th>
               <th>Poder</th>
-              
               <th>Especialidad</th>
               <th>Cargo</th>
               <th>Creado Por:</th>
@@ -204,13 +205,12 @@ import Swal from "sweetalert2";
                Editar
                </button>
               </td>
-              <td>{{ candidate.name }}</td>
-              <td>{{ candidate.fathersLastName }}</td>
-              <td>{{ candidate.mothersLastName }}</td>
+              <td>{{ candidate.name + " " + candidate.fathersLastName + " " + candidate.mothersLastName }}</td>
+              
               <td>{{ candidate.electoralKey }}</td>
               <td>{{ candidate.email }}</td>
+              <td>{{ candidate.phone }}</td>
               <td>{{ candidate.power }}</td>
-              
               <td>{{ candidate.subcharge }}</td>
               <td>{{ candidate.subcharge2 }}</td>
               <td>{{ candidate.createdBy ? candidate.createdBy[1] : "" }}</td>
@@ -411,7 +411,7 @@ import Swal from "sweetalert2";
       .modal-dialog {
        position: fixed;
        width: 600px; /* Ancho del modal */
-       
+      
        top: 50%;
        left: 50%;
        padding: 2rem;
@@ -423,7 +423,7 @@ import Swal from "sweetalert2";
       .modal-title{
         flex-grow: 1;
         text-align: center; /* Centra el texto del título */
-        font-size: 1.5rem; /* Tamaño de fuente */
+        font-size: 1rem; /* Tamaño de fuente */
         color:rgb(0, 0, 0); /* Color del texto */
         margin: 0;
       }
@@ -520,6 +520,14 @@ import Swal from "sweetalert2";
         background-color: #2c7be5;
         color: white;
       }
+      .excel-btn{
+        background-color:rgb(14, 109, 14);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
     `,
   ],
 })
@@ -612,49 +620,24 @@ export class CandidateFormComponent {
     }
   }
 
-  onPositionTypePower() {
+
+
+  onPositionTypeChange() {
+    this.candidate.charge = ""; 
+    this.candidate.subcharge="";
     //Agregar el selected candidate para cuadno van a modificar
-    if (this.candidate.charge === "Ejecutivo" || this.selectedCandidate.charge === "Ejecutivo" ) {
-      this.specificPositions = [
-        "Magistrado de la Primera Sala Penal",
-        "Magistrado de la Segunda Sala Penal",
-        "Magistrado de la Sala Civil",
-        "Magistrado de la Sala Familiar",
-      ];
-      
-    } else if (this.candidate.charge === "Tribunal" || this.selectedCandidate.charge === "Tribunal" ) {
-      this.specificPositions = [
-        "Magistrado del Tribunal de Disciplina Judicial",
-      ];
-    } else if (this.candidate.charge === "Juzgado" || this.selectedCandidate.charge === "Juzgado") {
+    if (this.candidate.charge === "Magistrados" || this.selectedCandidate.charge === "Magistrados" ) {
       this.specificPositions = [
         "Penal",
         "Civil",
         "Familiar",
-        "Mercantil",
-        "Mixto",
-      ];
-    }
-  }
-
-
-  
-
-  onPositionTypeChange() {
-    //Agregar el selected candidate para cuadno van a modificar
-    if (this.candidate.charge === "Magistrados" || this.selectedCandidate.charge === "Magistrados" ) {
-      this.specificPositions = [
-        "Magistrado de la Primera Sala Penal",
-        "Magistrado de la Segunda Sala Penal",
-        "Magistrado de la Sala Civil",
-        "Magistrado de la Sala Familiar",
       ];
       this.subcharge2 = []; // No hay segunda categoría para magistraturas
       this.candidate.subcharge2 = ""; // Limpia el campo subcharge2
       this.selectedCandidate.subcharge2 = ""; // Limpia el campo subcharge2 de modificacion
     } else if (this.candidate.charge === "Tribunal" || this.selectedCandidate.charge === "Tribunal" ) {
       this.specificPositions = [
-        "Magistrado del Tribunal de Disciplina Judicial",
+        "Tribunal Disciplina Judicial",
       ];
     } else if (this.candidate.charge === "Juzgado" || this.selectedCandidate.charge === "Juzgado") {
       this.specificPositions = [
@@ -691,7 +674,7 @@ export class CandidateFormComponent {
         "Juzgado de Ejecución de Sanciones de Zacatecas",
         "Juzgado Especial de Justicia para Adolescentes de Zacatecas",
         "Juzgado Penal de Sistema de Tradicional de la Región",
-        "Juzgado penal del Sistema Tradicional de la Región Norte",
+        "Juzgado Penal del Sistema Tradicional de la Región Norte",
       ];
     } else if (this.candidate.subcharge === "Civil" || this.selectedCandidate.subcharge === "Civil") {
       this.subcharge2 = ["Sin Dato", "Juzgado Primero Civil de Fresnillo"];
@@ -827,5 +810,29 @@ export class CandidateFormComponent {
           Swal.fire("Error", "No se pudo actualizar el candidato", "error");
         }
       );
+  }
+
+  exportToExcel(): void {
+    // Crear una nueva estructura con las columnas deseadas y nombres personalizados
+    const exportData = this.registeredCandidates.map(candidate => ({
+      'Nombre': candidate.name,
+      'Apellido Paterno': candidate.fathersLastName,
+      'Apellido Materno': candidate.mothersLastName,
+      'Clave de Elector': candidate.electoralKey,
+      'Correo Electrónico': candidate.email,
+      'Telefono': candidate.phone,
+      'Poder': candidate.power,
+      'Especialidad': candidate.subcharge,
+      'Cargo': candidate.subcharge2
+    }));
+
+    // Crear una hoja de trabajo
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+
+    // Crear un libro de trabajo y agregar la hoja de trabajo
+    const workbook: XLSX.WorkBook = { Sheets: { 'Candidatos': worksheet }, SheetNames: ['Candidatos'] };
+
+    // Guardar el archivo Excel
+    XLSX.writeFile(workbook, 'Registro Candidatos 2025.xlsx');
   }
 }
