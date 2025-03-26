@@ -191,9 +191,9 @@ import Swal from "sweetalert2";
               <th>Clave de Elector</th>
               <th>Correo</th>
               <th>Poder</th>
+              
+              <th>Especialidad</th>
               <th>Cargo</th>
-              <th>Materia</th>
-              <th>Distrito</th>
               <th>Creado Por:</th>
             </tr>
           </thead>
@@ -210,7 +210,7 @@ import Swal from "sweetalert2";
               <td>{{ candidate.electoralKey }}</td>
               <td>{{ candidate.email }}</td>
               <td>{{ candidate.power }}</td>
-              <td>{{ candidate.charge }}</td>
+              
               <td>{{ candidate.subcharge }}</td>
               <td>{{ candidate.subcharge2 }}</td>
               <td>{{ candidate.createdBy ? candidate.createdBy[1] : "" }}</td>
