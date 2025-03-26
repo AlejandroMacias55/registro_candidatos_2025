@@ -5,6 +5,7 @@ export interface Candidate {
       "electoralKey": string,
       "fathersLastName": string,
       "mothersLastName": string,
+      "power": string,
       "charge": string,
       "subcharge": string,
       "subcharge2": string,

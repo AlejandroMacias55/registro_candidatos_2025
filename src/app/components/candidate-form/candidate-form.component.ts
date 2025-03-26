@@ -85,6 +85,27 @@ import Swal from "sweetalert2";
             />
           </div>
           <div class="form-group">
+            <label for="power">Poder:</label>
+            <select
+              id="power"
+              name="power"
+              [(ngModel)]="candidate.power"
+              
+              required
+              class="form-control"
+            >
+              <option value="">Seleccione un tipo</option>
+              <option value="Ejecutivo">
+                Poder Ejecutivo
+              </option>
+              <option value="Legislativo">
+                Poder Legislativo
+              </option>
+              <option value="Judicial">Poder Judicial</option>
+              <option value="Funciones">En Funciones</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label for="charge">Cargo:</label>
             <select
               id="charge"
@@ -169,6 +190,7 @@ import Swal from "sweetalert2";
               <th>Apellido Materno</th>
               <th>Clave de Elector</th>
               <th>Correo</th>
+              <th>Poder</th>
               <th>Cargo</th>
               <th>Materia</th>
               <th>Distrito</th>
@@ -187,6 +209,7 @@ import Swal from "sweetalert2";
               <td>{{ candidate.mothersLastName }}</td>
               <td>{{ candidate.electoralKey }}</td>
               <td>{{ candidate.email }}</td>
+              <td>{{ candidate.power }}</td>
               <td>{{ candidate.charge }}</td>
               <td>{{ candidate.subcharge }}</td>
               <td>{{ candidate.subcharge2 }}</td>
@@ -277,6 +300,27 @@ import Swal from "sweetalert2";
               />
             </div>
             <div class="form-group">
+            <label for="editpower">Poder:</label>
+            <select
+              id="editpower"
+              name="editpower"
+              [(ngModel)]="selectedCandidate.power"
+              
+              required
+              class="form-control"
+            >
+              <option value="">Seleccione un tipo</option>
+              <option value="Ejecutivo">
+                Poder Ejecutivo
+              </option>
+              <option value="Legislativo">
+                Poder Legislativo
+              </option>
+              <option value="Judicial">Poder Judicial</option>
+              <option value="Funciones">En Funciones</option>
+            </select>
+          </div>
+            <div class="form-group">
             <label for="editcharge">Cargo:</label>
             <select
               id="editcharge"
@@ -291,11 +335,12 @@ import Swal from "sweetalert2";
                 Magistraturas Tribunal Superior de Justicia
               </option>
               <option value="Tribunal">
-                Magistraturas Tribunal Disciplina Judicial
+              Magistraturas Tribunal Disciplina Judicial
               </option>
               <option value="Juzgado">Juzgados</option>
             </select>
           </div>
+           
           
           <div class="form-group" *ngIf="selectedCandidate.charge">
             <label for="editsubcharge">Materia</label>
@@ -491,6 +536,7 @@ export class CandidateFormComponent {
     subcharge: "",
     subcharge2: "",
     phone:"",
+    power:"",
 
   };
   
@@ -504,7 +550,9 @@ export class CandidateFormComponent {
     charge: "",
     subcharge: "",
     subcharge2: "",
-    phone:"", };
+    phone:"",
+    power:"",
+   };
   
 
   specificPositions: string[] = [];
@@ -552,8 +600,6 @@ export class CandidateFormComponent {
               (candidato) => candidato.id !== this.selectedCandidate?.id
               
             );
-            // Cerrar el modal (si usas Bootstrap)
-           // $('#showEditModal').modal('hide');
            Swal.fire("Éxito", "El candidato ha sido actualizado correctamente", "success");
            this.closeEditModal();
           },
@@ -563,6 +609,31 @@ export class CandidateFormComponent {
           }
         );
       }
+    }
+  }
+
+  onPositionTypePower() {
+    //Agregar el selected candidate para cuadno van a modificar
+    if (this.candidate.charge === "Ejecutivo" || this.selectedCandidate.charge === "Ejecutivo" ) {
+      this.specificPositions = [
+        "Magistrado de la Primera Sala Penal",
+        "Magistrado de la Segunda Sala Penal",
+        "Magistrado de la Sala Civil",
+        "Magistrado de la Sala Familiar",
+      ];
+      
+    } else if (this.candidate.charge === "Tribunal" || this.selectedCandidate.charge === "Tribunal" ) {
+      this.specificPositions = [
+        "Magistrado del Tribunal de Disciplina Judicial",
+      ];
+    } else if (this.candidate.charge === "Juzgado" || this.selectedCandidate.charge === "Juzgado") {
+      this.specificPositions = [
+        "Penal",
+        "Civil",
+        "Familiar",
+        "Mercantil",
+        "Mixto",
+      ];
     }
   }
 
@@ -714,6 +785,7 @@ export class CandidateFormComponent {
           subcharge: "",
           subcharge2: "",
           phone:"",
+          power:"",
         };
         this.specificPositions = [];
         this.subcharge2 = [];
