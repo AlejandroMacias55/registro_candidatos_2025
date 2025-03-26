@@ -623,7 +623,7 @@ export class CandidateFormComponent {
 
 
   onPositionTypeChange() {
-    this.candidate.charge = ""; 
+    
     this.candidate.subcharge="";
     //Agregar el selected candidate para cuadno van a modificar
     if (this.candidate.charge === "Magistrados" || this.selectedCandidate.charge === "Magistrados" ) {
@@ -637,7 +637,7 @@ export class CandidateFormComponent {
       this.selectedCandidate.subcharge2 = ""; // Limpia el campo subcharge2 de modificacion
     } else if (this.candidate.charge === "Tribunal" || this.selectedCandidate.charge === "Tribunal" ) {
       this.specificPositions = [
-        "Tribunal Disciplina Judicial",
+        "Disciplina Judicial",
       ];
     } else if (this.candidate.charge === "Juzgado" || this.selectedCandidate.charge === "Juzgado") {
       this.specificPositions = [
