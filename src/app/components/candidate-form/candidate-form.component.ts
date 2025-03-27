@@ -147,11 +147,7 @@ import Swal from "sweetalert2";
           </div>
           <div
             class="form-group"
-            *ngIf="
-              candidate.charge !== 'Magistrados' &&
-              candidate.charge !== 'Tribunal' &&
-              candidate.subcharge
-            "
+            *ngIf="candidate.subcharge"
           >
             <label for="subcharge2">Distrito</label>
             <select
@@ -364,11 +360,7 @@ import Swal from "sweetalert2";
 
           <div
             class="form-group"
-            *ngIf="
-              selectedCandidate.charge !== 'Magistrados' &&
-              selectedCandidate.charge !== 'Tribunal' &&
-              selectedCandidate.subcharge
-            "
+            *ngIf="selectedCandidate.subcharge"
           >
             <label for="editsubcharge2">Distrito</label>
             <select
@@ -545,6 +537,8 @@ export class CandidateFormComponent {
     subcharge2: "",
     phone:"",
     power:"",
+    username:"",
+    password:"",
 
   };
   
@@ -560,6 +554,8 @@ export class CandidateFormComponent {
     subcharge2: "",
     phone:"",
     power:"",
+    username:"",
+    password:"",
    };
   
 
@@ -814,6 +810,8 @@ export class CandidateFormComponent {
           subcharge2: "",
           phone:"",
           power:"",
+          username:"",
+          password:"",
         };
         this.specificPositions = [];
         this.subcharge2 = [];
@@ -868,7 +866,9 @@ export class CandidateFormComponent {
       'Telefono': candidate.phone,
       'Poder': candidate.power,
       'Especialidad': candidate.subcharge,
-      'Cargo': candidate.subcharge2
+      'Cargo': candidate.subcharge2,
+      'Usuario': candidate.username,
+      'Contraseña': candidate.password
     }));
 
     // Crear una hoja de trabajo

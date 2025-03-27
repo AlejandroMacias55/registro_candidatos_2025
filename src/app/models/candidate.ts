@@ -10,5 +10,7 @@ export interface Candidate {
       "subcharge": string,
       "subcharge2": string,
       "phone":string,
+      "username":string,
+      "password":string,
       "createdBy"?: any[],
 }
