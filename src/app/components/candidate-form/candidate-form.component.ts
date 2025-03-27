@@ -632,9 +632,9 @@ export class CandidateFormComponent {
         "Civil",
         "Familiar",
       ];
-      this.subcharge2 = []; // No hay segunda categoría para magistraturas
-      this.candidate.subcharge2 = ""; // Limpia el campo subcharge2
-      this.selectedCandidate.subcharge2 = ""; // Limpia el campo subcharge2 de modificacion
+      //this.subcharge2 = []; // No hay segunda categoría para magistraturas
+      //this.candidate.subcharge2 = ""; // Limpia el campo subcharge2
+      //this.selectedCandidate.subcharge2 = ""; // Limpia el campo subcharge2 de modificacion
     } else if (this.candidate.charge === "Tribunal" || this.selectedCandidate.charge === "Tribunal" ) {
       this.specificPositions = [
         "Disciplina Judicial",
@@ -681,14 +681,23 @@ export class CandidateFormComponent {
         "Juzgado de Control y Tribunal de Enjuiciamiento en Zacatecas",
         "Juzgado Penal de Sistema de Tradicional de la Región",
         "Juzgado Penal del Sistema Tradicional de la Región Norte",
+        "Magistratura de Sala Penal",
+        "Magistratura Primera Sala Penal",
+        "Magistratura Segunda Sala Penal",
       ];
     } else if (this.candidate.subcharge === "Civil" || this.selectedCandidate.subcharge === "Civil") {
-      this.subcharge2 = ["Sin Dato", "Juzgado Primero Civil de Fresnillo"];
+      this.subcharge2 = ["Sin Dato", 
+        "Juzgado Primero Civil de Fresnillo",
+        "Magistratura de Sala Familiar",
+        "Magistratura de Sala Civil",
+      ];
     } else if (this.candidate.subcharge === "Familiar" || this.selectedCandidate.subcharge === "Familiar" ) {
       this.subcharge2 = [
         "Sin Dato",
         "Juzgado Primero Familiar de Zacatecas",
         "Juzgado Tercero Familiar de Fresnillo",
+        "Magistratura de Sala Familiar",
+        
       ];
     } else if (this.candidate.subcharge === "Mercantil" || this.selectedCandidate.subcharge === "Mercantil" ) {
       this.subcharge2 = [
@@ -736,7 +745,14 @@ export class CandidateFormComponent {
         "Sin Dato",
         "Sala Segunda Civil",
       ];
-    } 
+    } else if (this.candidate.subcharge === "Disciplina Judicial " || this.selectedCandidate.subcharge === "Disciplina Judicial" ) {
+      this.subcharge2 = [
+        "Sin Dato",
+        "Tribunal de Disciplina Jucicial",
+        "Magistratura del Tribunal de Disciplina Jucicial",
+        
+      ];
+    }
 
     this.candidate.subcharge2 = "";
     //limpiar subcharge2 de midificacion
