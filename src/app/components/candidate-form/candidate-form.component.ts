@@ -642,10 +642,16 @@ export class CandidateFormComponent {
     } else if (this.candidate.charge === "Juzgado" || this.selectedCandidate.charge === "Juzgado") {
       this.specificPositions = [
         "Penal",
+        "Penal Tradicional",
         "Civil",
+        "Sala Civil",
         "Familiar",
         "Mercantil",
         "Mixto",
+        "Adolescentes",
+        "Ejecucion de Sanciones",
+        "Control y Enjuiciamiento",
+        "Penal Tradicional",
       ];
     }
 
@@ -658,7 +664,9 @@ export class CandidateFormComponent {
 
   onPositionTypeChange2() {
     //Agregar el selected candidate para cuadno van a modificar
-    if (this.candidate.subcharge === "Penal" || this.selectedCandidate.subcharge === "Penal" ) {
+    if (this.candidate.subcharge === "Penal" || this.selectedCandidate.subcharge === "Penal" 
+      || this.candidate.subcharge === "Control y Enjuiciamiento" || this.selectedCandidate.subcharge === "Control y Enjuiciamiento") 
+      {
       this.subcharge2 = [
         "Sin Dato",
         "Juzgado de Control y Tribunal de Enjuiciamiento en Calera",
@@ -671,8 +679,6 @@ export class CandidateFormComponent {
         "Juzgado de Control y Tribunal de Enjuiciamiento en Rio Grande",
         "Juzgado de Control y Tribunal de Enjuiciamiento en Tlaltenango",
         "Juzgado de Control y Tribunal de Enjuiciamiento en Zacatecas",
-        "Juzgado de Ejecución de Sanciones de Zacatecas",
-        "Juzgado Especial de Justicia para Adolescentes de Zacatecas",
         "Juzgado Penal de Sistema de Tradicional de la Región",
         "Juzgado Penal del Sistema Tradicional de la Región Norte",
       ];
@@ -707,7 +713,30 @@ export class CandidateFormComponent {
         "Juzgado Segundo Mixto de Rio Grande",
         "Juzgado Segundo Mixto de Tlaltenango",
       ];
+    } else if (this.candidate.subcharge === "Adolescentes" || this.selectedCandidate.subcharge === "Adolescentes") {
+      this.subcharge2 = [
+        "Sin Dato",
+        "Juzgado Especial de Justicia para Adolescentes de Zacatecas",
+      ];
+    } else if (this.candidate.subcharge === "Ejecucion de Sanciones" || this.selectedCandidate.subcharge === "Ejecucion de Sanciones") {
+      this.subcharge2 = [
+        "Sin Dato",
+        "Juzgado de Ejecución de Sanciones de Zacatecas",
+        "Juzgado de Ejecución de Sanciones Penales de Zacatecas",
+      ];
     }
+    else if (this.candidate.subcharge === "Penal Tradicional" || this.selectedCandidate.subcharge === "Penal Tradicional") {
+      this.subcharge2 = [
+        "Sin Dato",
+        "Juzgado Penal Del Sistema Tradicional De La Region Centro Sur",
+        "Juzgado Penal Del Sistema Tradicional De La Region Norte",
+      ];
+    }else if (this.candidate.subcharge === "Sala Civil" || this.selectedCandidate.subcharge === "Sala Civil") {
+      this.subcharge2 = [
+        "Sin Dato",
+        "Sala Segunda Civil",
+      ];
+    } 
 
     this.candidate.subcharge2 = "";
     //limpiar subcharge2 de midificacion
