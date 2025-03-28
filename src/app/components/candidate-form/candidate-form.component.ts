@@ -178,13 +178,28 @@ import Swal from "sweetalert2";
       <!-- Tabla de Registros -->
       <div class="table-container" *ngIf="registeredCandidates.length > 0">
         <h3>Registros Guardados</h3>
-        <button class="excel-btn" (click)="exportToExcel()">Descargar Excel</button>
+        <div class="button-container">
+  <button class="excel-btn" (click)="exportToExcel()">
+    <i class="fa-solid fa-file-excel icon"></i> Descargar Excel
+  </button>
+
+  <input 
+    type="text" 
+    class="search-input" 
+    placeholder="🔍 Buscar por nombre..." 
+    [(ngModel)]="searchTerm"
+    (input)="filterCandidates()"
+  />
+
+  <button class="reload-btn" (click)="loadCandidates()">
+    <i class="fa-solid fa-rotate-right icon"></i> Actualizar Tabla
+  </button>
+</div>
         <table class="table">
           <thead>
             <tr>
               <th>Acciones</th>
               <th>Nombre</th>
-            
               <th>Clave de Elector</th>
               <th>Correo</th>
               <th>Telefono</th>
@@ -195,14 +210,13 @@ import Swal from "sweetalert2";
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let candidate of registeredCandidates">
+          <tr *ngFor="let candidate of filteredCandidates">
               <td>
                <button (click)="openEditModal(candidate)" class="btn btn-warning">
                Editar
                </button>
               </td>
               <td>{{ candidate.name + " " + candidate.fathersLastName + " " + candidate.mothersLastName }}</td>
-              
               <td>{{ candidate.electoralKey }}</td>
               <td>{{ candidate.email }}</td>
               <td>{{ candidate.phone }}</td>
@@ -475,7 +489,11 @@ import Swal from "sweetalert2";
         border: 1px solid #ddd;
         border-radius: 5px;
       }
-      
+      .button-container {
+       display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px; /* Espacio entre los botones y la tabla */
+      }
       .submit-btn {
         background-color: #2c7be5;
         color: white;
@@ -520,13 +538,38 @@ import Swal from "sweetalert2";
         border-radius: 4px;
         cursor: pointer;
       }
+      .reload-btn{
+        background-color:rgb(125, 193, 214);
+        color: black;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        
+      }
+      .search-input {
+        width: 250px;
+        padding: 8px 12px;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        outline: none;
+      }
+
+     .search-input:focus {
+       border-color: #6f42c1;
+       box-shadow: 0 0 5px rgba(111, 66, 193, 0.5);
+      }
     `,
   ],
 })
 
 export class CandidateFormComponent {
+  searchTerm: string = '';
+  filteredCandidates: Candidate[] = []; // Candidatos filtrados
+
   candidate: Candidate = {
-    id:0,
+    id: 0,
     name: "",
     email: "",
     electoralKey: "",
@@ -535,15 +578,16 @@ export class CandidateFormComponent {
     charge: "",
     subcharge: "",
     subcharge2: "",
-    phone:"",
-    power:"",
-    username:"",
-    password:"",
+    phone: "",
+    power: "",
+    username: "",
+    password: "",
 
   };
-  
+
   showEditModal = false;
-  selectedCandidate: Candidate = { id:0,
+  selectedCandidate: Candidate = {
+    id: 0,
     name: "",
     email: "",
     electoralKey: "",
@@ -552,12 +596,13 @@ export class CandidateFormComponent {
     charge: "",
     subcharge: "",
     subcharge2: "",
-    phone:"",
-    power:"",
-    username:"",
-    password:"",
-   };
-  
+    phone: "",
+    power: "",
+    username: "",
+    password: "",
+  };
+
+
 
   specificPositions: string[] = [];
   subcharge2: string[] = [];
@@ -566,7 +611,7 @@ export class CandidateFormComponent {
   constructor(
     private candidateService: CandidateService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadCandidates();
@@ -576,20 +621,10 @@ export class CandidateFormComponent {
     this.candidateService.getCandidates().subscribe(
       (response: Candidate[]) => {
         console.log("Candidatos obtenidos:", response);
-        // Ordenar los candidatos por nombre
-        this.registeredCandidates = response.sort((a, b) => {
-          if (a.name.toLowerCase() < b.name.toLowerCase()) {
-            return -1;
-          }
-          if (a.name.toLowerCase() > b.name.toLowerCase()) {
-            return 1;
-          }
-          return 0;
-        });
+        this.registeredCandidates = response.sort((a, b) => a.name.localeCompare(b.name));
+        this.filteredCandidates = [...this.registeredCandidates]; // Inicializar con todos
       },
-      (error) => {
-        console.error("Error al obtener los candidatos", error);
-      }
+      (error) => console.error("Error al obtener los candidatos", error)
     );
   }
 
@@ -602,10 +637,10 @@ export class CandidateFormComponent {
             // Eliminar el candidato del array local
             this.registeredCandidates = this.registeredCandidates.filter(
               (candidato) => candidato.id !== this.selectedCandidate?.id
-              
+
             );
-           Swal.fire("Éxito", "El candidato ha sido actualizado correctamente", "success");
-           this.closeEditModal();
+            Swal.fire("Éxito", "El candidato ha sido actualizado correctamente", "success");
+            this.closeEditModal();
           },
           (error) => {
             Swal.fire("Error", "'Error al eliminar el candidato", "error");
@@ -619,10 +654,11 @@ export class CandidateFormComponent {
 
 
   onPositionTypeChange() {
-    
-    this.candidate.subcharge="";
+
+    this.candidate.subcharge = "";
+    this.candidate.subcharge2 = "";
     //Agregar el selected candidate para cuadno van a modificar
-    if (this.candidate.charge === "Magistrados" || this.selectedCandidate.charge === "Magistrados" ) {
+    if (this.candidate.charge === "Magistrados" || this.selectedCandidate.charge === "Magistrados") {
       this.specificPositions = [
         "Penal",
         "Civil",
@@ -631,7 +667,7 @@ export class CandidateFormComponent {
       //this.subcharge2 = []; // No hay segunda categoría para magistraturas
       //this.candidate.subcharge2 = ""; // Limpia el campo subcharge2
       //this.selectedCandidate.subcharge2 = ""; // Limpia el campo subcharge2 de modificacion
-    } else if (this.candidate.charge === "Tribunal" || this.selectedCandidate.charge === "Tribunal" ) {
+    } else if (this.candidate.charge === "Tribunal" || this.selectedCandidate.charge === "Tribunal") {
       this.specificPositions = [
         "Disciplina Judicial",
       ];
@@ -651,18 +687,18 @@ export class CandidateFormComponent {
       ];
     }
 
-    this.candidate.subcharge = ""; 
+    this.candidate.subcharge = "";
     this.candidate.subcharge2 = ""; // Reinicia la selección 
     //reinicia seleccion en modificacion
-    this.selectedCandidate.subcharge="";
-    this.selectedCandidate.subcharge2= "";
+    this.selectedCandidate.subcharge = "";
+    this.selectedCandidate.subcharge2 = "";
   }
 
   onPositionTypeChange2() {
+
     //Agregar el selected candidate para cuadno van a modificar
-    if (this.candidate.subcharge === "Penal" || this.selectedCandidate.subcharge === "Penal" 
-      || this.candidate.subcharge === "Control y Enjuiciamiento" || this.selectedCandidate.subcharge === "Control y Enjuiciamiento") 
-      {
+    if (this.candidate.subcharge === "Penal" || this.selectedCandidate.subcharge === "Penal"
+      || this.candidate.subcharge === "Control y Enjuiciamiento" || this.selectedCandidate.subcharge === "Control y Enjuiciamiento") {
       this.subcharge2 = [
         "Sin Dato",
         "Juzgado de Control y Tribunal de Enjuiciamiento en Calera",
@@ -682,20 +718,20 @@ export class CandidateFormComponent {
         "Magistratura Segunda Sala Penal",
       ];
     } else if (this.candidate.subcharge === "Civil" || this.selectedCandidate.subcharge === "Civil") {
-      this.subcharge2 = ["Sin Dato", 
+      this.subcharge2 = ["Sin Dato",
         "Juzgado Primero Civil de Fresnillo",
         "Magistratura de Sala Familiar",
         "Magistratura de Sala Civil",
       ];
-    } else if (this.candidate.subcharge === "Familiar" || this.selectedCandidate.subcharge === "Familiar" ) {
+    } else if (this.candidate.subcharge === "Familiar" || this.selectedCandidate.subcharge === "Familiar") {
       this.subcharge2 = [
         "Sin Dato",
         "Juzgado Primero Familiar de Zacatecas",
         "Juzgado Tercero Familiar de Fresnillo",
         "Magistratura de Sala Familiar",
-        
+
       ];
-    } else if (this.candidate.subcharge === "Mercantil" || this.selectedCandidate.subcharge === "Mercantil" ) {
+    } else if (this.candidate.subcharge === "Mercantil" || this.selectedCandidate.subcharge === "Mercantil") {
       this.subcharge2 = [
         "Sin Dato",
         "Juzgado Primero Mercantil de Fresnillo",
@@ -736,17 +772,17 @@ export class CandidateFormComponent {
         "Juzgado Penal Del Sistema Tradicional De La Region Centro Sur",
         "Juzgado Penal Del Sistema Tradicional De La Region Norte",
       ];
-    }else if (this.candidate.subcharge === "Sala Civil" || this.selectedCandidate.subcharge === "Sala Civil") {
+    } else if (this.candidate.subcharge === "Sala Civil" || this.selectedCandidate.subcharge === "Sala Civil") {
       this.subcharge2 = [
         "Sin Dato",
         "Sala Segunda Civil",
       ];
-    } else if (this.candidate.subcharge === "Disciplina Judicial " || this.selectedCandidate.subcharge === "Disciplina Judicial" ) {
+    } else if (this.candidate.subcharge === "Disciplina Judicial " || this.selectedCandidate.subcharge === "Disciplina Judicial") {
       this.subcharge2 = [
         "Sin Dato",
         "Tribunal de Disciplina Jucicial",
         "Magistratura del Tribunal de Disciplina Jucicial",
-        
+
       ];
     }
 
@@ -765,7 +801,7 @@ export class CandidateFormComponent {
       });
       return;
     }
-  
+
     // Si el formulario es válido, ejecutar la lógica normal de envío
     this.onSubmit();
   }
@@ -779,9 +815,9 @@ export class CandidateFormComponent {
   isSubmitting = false;
 
   onSubmit() {
-    
+
     //console.log("Entra al Onsubmint", this.isSubmitting);
-    
+
     if (this.isSubmitting) return; // Evita que se envíe dos veces seguidas
     this.isSubmitting = true;
     this.candidateService.submitCandidate(this.candidate).subscribe(
@@ -799,7 +835,7 @@ export class CandidateFormComponent {
         this.loadCandidates(); // Cargar los datos actualizados desde el backend
         // Limpiar todos los campos del formulario
         this.candidate = {
-          id:0,
+          id: 0,
           name: "",
           email: "",
           electoralKey: "",
@@ -808,22 +844,22 @@ export class CandidateFormComponent {
           charge: "",
           subcharge: "",
           subcharge2: "",
-          phone:"",
-          power:"",
-          username:"",
-          password:"",
+          phone: "",
+          power: "",
+          username: "",
+          password: "",
         };
         this.specificPositions = [];
         this.subcharge2 = [];
-        this.isSubmitting=false;
+        this.isSubmitting = false;
       },
       (error) => {
         console.error("Error al enviar candidato", error);
       }
-      
-      
+
+
     );
-    
+
   }
 
   openEditModal(candidate: Candidate) {
@@ -839,7 +875,7 @@ export class CandidateFormComponent {
 
   updateCandidate() {
     if (!this.selectedCandidate) return;
-  
+
     this.candidateService.updateCandidate(this.selectedCandidate.id, this.selectedCandidate)
       .subscribe(
         (response) => {
@@ -879,5 +915,21 @@ export class CandidateFormComponent {
 
     // Guardar el archivo Excel
     XLSX.writeFile(workbook, 'Registro Candidatos 2025.xlsx');
+  }
+  // 🔍 Filtrar candidatos según el término de búsqueda
+  filterCandidates() {
+    console.log("entra a filter:");
+    const searchLower = this.searchTerm.toLowerCase().trim(); // Normaliza el texto
+
+    if (!searchLower) {
+      this.filteredCandidates = [...this.registeredCandidates]; // Restaura lista completa
+      return;
+    }
+
+    this.filteredCandidates = this.registeredCandidates.filter(candidate =>
+      candidate.name.toLowerCase().includes(searchLower) ||
+      candidate.fathersLastName.toLowerCase().includes(searchLower) ||
+      candidate.mothersLastName.toLowerCase().includes(searchLower)
+    );
   }
 }
