@@ -30,9 +30,17 @@
             "index": "src/index.html",
             "browser": "src/main.ts",
             "outputPath": "dist/demo",
-            "polyfills": ["zone.js"],
-            "scripts": [],
-            "styles": ["src/global_styles.css"],
+            "polyfills": [
+              "zone.js"
+            ],
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/datatables.net/js/dataTables.min.js"
+            ],
+            "styles": [
+              "src/global_styles.css"
+              
+            ],
             "tsConfig": "tsconfig.app.json",
             "baseHref": "/captura_candidatura/"
           }

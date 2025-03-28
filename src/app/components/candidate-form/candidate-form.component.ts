@@ -2,15 +2,18 @@ import { Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Candidate } from "../../models/candidate";
-import * as XLSX from 'xlsx';
+import * as XLSX from "xlsx";
 import { CandidateService } from "../../services/candidate.service";
 import { Router } from "@angular/router";
 import Swal from "sweetalert2";
+import { Subject } from "rxjs";
+import { DataTablesModule } from "angular-datatables";
+import "datatables.net";
 
 @Component({
   selector: "app-candidate-form",
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DataTablesModule],
   template: `
     <div class="form-table-container">
       <!-- Formulario -->
@@ -91,17 +94,12 @@ import Swal from "sweetalert2";
               id="power"
               name="power"
               [(ngModel)]="candidate.power"
-              
               required
               class="form-control"
             >
               <option value="">Seleccione un tipo</option>
-              <option value="Ejecutivo">
-                Poder Ejecutivo
-              </option>
-              <option value="Legislativo">
-                Poder Legislativo
-              </option>
+              <option value="Ejecutivo">Poder Ejecutivo</option>
+              <option value="Legislativo">Poder Legislativo</option>
               <option value="Judicial">Poder Judicial</option>
               <option value="Funciones">En Funciones</option>
             </select>
@@ -145,10 +143,7 @@ import Swal from "sweetalert2";
               </option>
             </select>
           </div>
-          <div
-            class="form-group"
-            *ngIf="candidate.subcharge"
-          >
+          <div class="form-group" *ngIf="candidate.subcharge">
             <label for="subcharge2">Distrito</label>
             <select
               id="subcharge2"
@@ -165,12 +160,11 @@ import Swal from "sweetalert2";
           </div>
           <button
             type="submit"
-            [disabled]="!isFormValid()" 
+            [disabled]="!isFormValid()"
             class="submit-btn"
-            
-            (click)="handleSubmit()">
+            (click)="handleSubmit()"
           >
-            Enviar
+            > Enviar
           </button>
         </form>
       </div>
@@ -179,23 +173,15 @@ import Swal from "sweetalert2";
       <div class="table-container" *ngIf="registeredCandidates.length > 0">
         <h3>Registros Guardados</h3>
         <div class="button-container">
-  <button class="excel-btn" (click)="exportToExcel()">
-    <i class="fa-solid fa-file-excel icon"></i> Descargar Excel
-  </button>
+          <button class="excel-btn" (click)="exportToExcel()">
+            <i class="fa-solid fa-file-excel icon"></i> Descargar Excel
+          </button>
 
-  <input 
-    type="text" 
-    class="search-input" 
-    placeholder="🔍 Buscar por nombre..." 
-    [(ngModel)]="searchTerm"
-    (input)="filterCandidates()"
-  />
-
-  <button class="reload-btn" (click)="loadCandidates()">
-    <i class="fa-solid fa-rotate-right icon"></i> Actualizar Tabla
-  </button>
-</div>
-        <table class="table">
+          <button class="reload-btn" (click)="loadCandidates()">
+            <i class="fa-solid fa-rotate-right icon"></i> Actualizar Tabla
+          </button>
+        </div>
+        <table datatable class="row-border hover">
           <thead>
             <tr>
               <th>Acciones</th>
@@ -210,13 +196,24 @@ import Swal from "sweetalert2";
             </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let candidate of filteredCandidates">
+            <tr *ngFor="let candidate of filteredCandidates">
               <td>
-               <button (click)="openEditModal(candidate)" class="btn btn-warning">
-               Editar
-               </button>
+                <button
+                  (click)="openEditModal(candidate)"
+                  class="btn btn-warning"
+                >
+                  Editar
+                </button>
               </td>
-              <td>{{ candidate.name + " " + candidate.fathersLastName + " " + candidate.mothersLastName }}</td>
+              <td>
+                {{
+                  candidate.name +
+                    " " +
+                    candidate.fathersLastName +
+                    " " +
+                    candidate.mothersLastName
+                }}
+              </td>
               <td>{{ candidate.electoralKey }}</td>
               <td>{{ candidate.email }}</td>
               <td>{{ candidate.phone }}</td>
@@ -232,12 +229,11 @@ import Swal from "sweetalert2";
 
     <!-- MODAL DE EDICIÓN -->
     <div class="modal" *ngIf="showEditModal">
-        <div class="modal-content">
+      <div class="modal-content">
         <div class="modal-dialog" role="document">
-          <h3 class="modal-title"> Editar Candidato</h3>  
+          <h3 class="modal-title">Editar Candidato</h3>
           <form (ngSubmit)="updateCandidate()">
             <div class="form-group">
-              
               <label for="editName">Nombre:</label>
               <input
                 type="text"
@@ -249,55 +245,55 @@ import Swal from "sweetalert2";
               />
             </div>
             <div class="form-grupo-grid">
-              <div >
-              <label for="editFathersLastName">Apellido Paterno:</label>
-              <input
-                type="text"
-                id="editFathersLastName"
-                [(ngModel)]="selectedCandidate.fathersLastName"
-                name="editFathersLastName"
-                class="form-control"
-                required
-              />
+              <div>
+                <label for="editFathersLastName">Apellido Paterno:</label>
+                <input
+                  type="text"
+                  id="editFathersLastName"
+                  [(ngModel)]="selectedCandidate.fathersLastName"
+                  name="editFathersLastName"
+                  class="form-control"
+                  required
+                />
               </div>
               <div>
-              <label for="editMothersLastName">Apellido Materno:</label>
-              <input
-                type="text"
-                id="editMothersLastName"
-                [(ngModel)]="selectedCandidate.mothersLastName"
-                name="editMothersLastName"
-                class="form-control"
-                required
-              />
+                <label for="editMothersLastName">Apellido Materno:</label>
+                <input
+                  type="text"
+                  id="editMothersLastName"
+                  [(ngModel)]="selectedCandidate.mothersLastName"
+                  name="editMothersLastName"
+                  class="form-control"
+                  required
+                />
               </div>
             </div>
-           
+
             <div class="form-grupo-grid">
               <div>
-              <label for="editelectoralKey">Clave del Elector:</label>
-              <input
-                type="text"
-                id="editelectoralKey"
-                [(ngModel)]="selectedCandidate.electoralKey"
-                name="editelectoralKey"
-                class="form-control"
-                required
-              />
+                <label for="editelectoralKey">Clave del Elector:</label>
+                <input
+                  type="text"
+                  id="editelectoralKey"
+                  [(ngModel)]="selectedCandidate.electoralKey"
+                  name="editelectoralKey"
+                  class="form-control"
+                  required
+                />
               </div>
               <div>
-              <label for="editphone">Num. Telefono:</label>
-              <input
-                type="text"
-                id="editphone"
-                [(ngModel)]="selectedCandidate.phone"
-                name="editphone"
-                class="form-control"
-                required
-              />
+                <label for="editphone">Num. Telefono:</label>
+                <input
+                  type="text"
+                  id="editphone"
+                  [(ngModel)]="selectedCandidate.phone"
+                  name="editphone"
+                  class="form-control"
+                  required
+                />
               </div>
             </div>
-           
+
             <div class="form-group">
               <label for="editemail">Correo Electronico:</label>
               <input
@@ -310,102 +306,219 @@ import Swal from "sweetalert2";
               />
             </div>
             <div class="form-group">
-            <label for="editpower">Poder:</label>
-            <select
-              id="editpower"
-              name="editpower"
-              [(ngModel)]="selectedCandidate.power"
-              
-              required
-              class="form-control"
-            >
-              <option value="">Seleccione un tipo</option>
-              <option value="Ejecutivo">
-                Poder Ejecutivo
-              </option>
-              <option value="Legislativo">
-                Poder Legislativo
-              </option>
-              <option value="Judicial">Poder Judicial</option>
-              <option value="Funciones">En Funciones</option>
-            </select>
-          </div>
-            <div class="form-group">
-            <label for="editcharge">Cargo:</label>
-            <select
-              id="editcharge"
-              name="editcharge"
-              [(ngModel)]="selectedCandidate.charge"
-              (change)="onPositionTypeChange()"
-              required
-              class="form-control"
-            >
-              <option value="">Seleccione un tipo</option>
-              <option value="Magistrados">
-                Magistraturas Tribunal Superior de Justicia
-              </option>
-              <option value="Tribunal">
-              Magistraturas Tribunal Disciplina Judicial
-              </option>
-              <option value="Juzgado">Juzgados</option>
-            </select>
-          </div>
-           
-          
-          <div class="form-group" *ngIf="selectedCandidate.charge">
-            <label for="editsubcharge">Materia</label>
-            <select
-              id="editsubcharge"
-              name="editsubcharge"
-              [(ngModel)]="selectedCandidate.subcharge"
-              (change)="onPositionTypeChange2()"
-              required
-              class="form-control"
-            >
-              <option value="">Seleccione un cargo</option>
-              <option
-                *ngFor="let position of specificPositions"
-                [value]="position"
+              <label for="editpower">Poder:</label>
+              <select
+                id="editpower"
+                name="editpower"
+                [(ngModel)]="selectedCandidate.power"
+                required
+                class="form-control"
               >
-                {{ position }}
-              </option>
-            </select>
-          </div>
+                <option value="">Seleccione un tipo</option>
+                <option value="Ejecutivo">Poder Ejecutivo</option>
+                <option value="Legislativo">Poder Legislativo</option>
+                <option value="Judicial">Poder Judicial</option>
+                <option value="Funciones">En Funciones</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="editcharge">Cargo:</label>
+              <select
+                id="editcharge"
+                name="editcharge"
+                [(ngModel)]="selectedCandidate.charge"
+                (change)="onPositionTypeChange()"
+                required
+                class="form-control"
+              >
+                <option value="">Seleccione un tipo</option>
+                <option value="Magistrados">
+                  Magistraturas Tribunal Superior de Justicia
+                </option>
+                <option value="Tribunal">
+                  Magistraturas Tribunal Disciplina Judicial
+                </option>
+                <option value="Juzgado">Juzgados</option>
+              </select>
+            </div>
 
-          <div
-            class="form-group"
-            *ngIf="selectedCandidate.subcharge"
-          >
-            <label for="editsubcharge2">Distrito</label>
-            <select
-              id="editsubcharge2"
-              name="editsubcharge2"
-              [(ngModel)]="selectedCandidate.subcharge2"
-              required
-              class="form-control"
-            >
-              <option value="">Seleccione un cargo</option>
-              <option *ngFor="let position of subcharge2" [value]="position">
-                {{ position }}
-              </option>
-            </select>
-          </div>
+            <div class="form-group" *ngIf="selectedCandidate.charge">
+              <label for="editsubcharge">Materia</label>
+              <select
+                id="editsubcharge"
+                name="editsubcharge"
+                [(ngModel)]="selectedCandidate.subcharge"
+                (change)="onPositionTypeChange2()"
+                required
+                class="form-control"
+              >
+                <option value="">Seleccione un cargo</option>
+                <option
+                  *ngFor="let position of specificPositions"
+                  [value]="position"
+                >
+                  {{ position }}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group" *ngIf="selectedCandidate.subcharge">
+              <label for="editsubcharge2">Distrito</label>
+              <select
+                id="editsubcharge2"
+                name="editsubcharge2"
+                [(ngModel)]="selectedCandidate.subcharge2"
+                required
+                class="form-control"
+              >
+                <option value="">Seleccione un cargo</option>
+                <option *ngFor="let position of subcharge2" [value]="position">
+                  {{ position }}
+                </option>
+              </select>
+            </div>
 
             <button type="submit" class="submit-btn">Guardar Cambios</button>
-            <div class= "botones-malos">
-            <button type="button" class="cancel-btn" (click)="closeEditModal()">
-              <-Volver
-            </button>
-            <button type="button" class="btn-danger" (click)="eliminarCandidato()">Eliminar Registro</button>
+            <div class="botones-malos">
+              <button
+                type="button"
+                class="cancel-btn"
+                (click)="closeEditModal()"
+              >
+                <-Volver
+              </button>
+              <button
+                type="button"
+                class="btn-danger"
+                (click)="eliminarCandidato()"
+              >
+                Eliminar Registro
+              </button>
             </div>
           </form>
         </div>
       </div>
-      </div>
-    
+    </div>
   `,
   styles: [
+    
     `
+     /* Estilos base para la tabla */
+     table.dataTable {
+      width: 100% !important;
+      margin: 0 auto;
+      clear: both;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+      /* Cabecera de la tabla */
+      table.dataTable thead th {
+      background: linear-gradient(135deg,rgb(154, 182, 218) 0%,rgb(59, 122, 199) 100%);
+      color: white;
+      font-weight: 600;
+      padding: 12px 15px;
+      border: none;
+      position: relative;
+    }
+    /* Efecto hover para cabeceras */
+    table.dataTable thead th:hover {
+      background: linear-gradient(135deg,rgb(136, 173, 219) 0%,rgb(76, 143, 231) 100%);
+    }
+
+    /* Celdas del cuerpo */
+    table.dataTable tbody td {
+      padding: 10px 15px;
+      vertical-align: middle;
+      border-bottom: 1px solid #e9ecef;
+      transition: all 0.3s ease;
+    }
+     /* Filas alternas */
+     table.dataTable tbody tr:nth-child(even) {
+      background-color:rgb(232, 236, 238);
+    }
+
+    /* Efecto hover para filas */
+    table.dataTable tbody tr:hover td {
+      background-color: #e9f0fb;
+      transform: scale(1.01);
+      box-shadow: 0 2px 8px rgba(44, 123, 229, 0.1);
+    }
+    
+    /* Botones de acción */
+    .btn-warning {
+      background-color:rgb(245, 201, 68);
+      color: #212529;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-warning:hover {
+      background-color: #e0a800;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Paginación */
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+      border: 1px solid #dee2e6;
+      padding: 6px 12px;
+      margin-left: 0;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+      background: linear-gradient(135deg, #2c7be5 0%, #1a4d8c 100%);
+      color: white !important;
+      border: 1px solid #2c7be5;
+    }
+
+    /* Barra de búsqueda */
+    .dataTables_filter input {
+      border: 1px solid #dee2e6;
+      border-radius: 20px;
+      padding: 8px 15px;
+      margin-left: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .dataTables_filter input:focus {
+      border-color: #2c7be5;
+      box-shadow: 0 0 0 0.2rem rgba(44, 123, 229, 0.25);
+      outline: none;
+    }
+
+    /* Selector de cantidad de registros */
+    .dataTables_length select {
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      padding: 6px;
+    }
+
+    /* Contenedor de la tabla */
+    .table-container {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      padding: 20px;
+      margin-top: 20px;
+    }
+     /* Efecto de carga */
+     @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    table.dataTable tbody tr {
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+
+
       .form-table-container {
         display: flex;
         flex-direction: column;
@@ -414,25 +527,57 @@ import Swal from "sweetalert2";
         
         padding: 1rem;
       }
+       /* Estilos base del modal */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+      animation: fadeIn 0.3s ease-out;
+    }
       .modal-dialog {
-       position: fixed;
-       width: 600px; /* Ancho del modal */
-      
-       top: 50%;
-       left: 50%;
-       padding: 2rem;
-       
-       transform: translate(-50%, -50%);
-       background-color: rgb(228, 228, 228);
-       box-shadow: 0 10px 30px rgba(7, 109, 192, 0.97);
-      }
-      .modal-title{
-        flex-grow: 1;
-        text-align: center; /* Centra el texto del título */
-        font-size: 1rem; /* Tamaño de fuente */
-        color:rgb(0, 0, 0); /* Color del texto */
-        margin: 0;
-      }
+      padding: 30px;
+      position: relative;
+    }
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 700px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(0);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+      /* Título del modal */
+    .modal-title {
+      color: #2c7be5;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #e9ecef;
+      text-align: center;
+    }
+     /* Formulario dentro del modal */
+     .modal form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
       @media (min-width: 768px) {
         .form-table-container {
           flex-direction: row;
@@ -440,12 +585,13 @@ import Swal from "sweetalert2";
         }
       }
       .cancel-btn{
-        background-color:rgba(122, 221, 130, 0.87);
+        background-color:rgba(45, 97, 49, 0.87);
         cursor: pointer;
         color: white;
         padding: 0.5rem 1.5rem;
         margin-top: 8px;
-        color:rgb(0, 0, 0); /* Color del texto */
+        color: white; /* Color del texto */
+        
       }
       .botones-malos{
         display: flex;
@@ -563,9 +709,10 @@ import Swal from "sweetalert2";
     `,
   ],
 })
-
 export class CandidateFormComponent {
-  searchTerm: string = '';
+  
+  dtTrigger: Subject<any> = new Subject();
+  searchTerm: string = "";
   filteredCandidates: Candidate[] = []; // Candidatos filtrados
 
   candidate: Candidate = {
@@ -582,7 +729,6 @@ export class CandidateFormComponent {
     power: "",
     username: "",
     password: "",
-
   };
 
   showEditModal = false;
@@ -602,8 +748,6 @@ export class CandidateFormComponent {
     password: "",
   };
 
-
-
   specificPositions: string[] = [];
   subcharge2: string[] = [];
   showModal: boolean = false;
@@ -611,7 +755,7 @@ export class CandidateFormComponent {
   constructor(
     private candidateService: CandidateService,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.loadCandidates();
@@ -621,7 +765,9 @@ export class CandidateFormComponent {
     this.candidateService.getCandidates().subscribe(
       (response: Candidate[]) => {
         console.log("Candidatos obtenidos:", response);
-        this.registeredCandidates = response.sort((a, b) => a.name.localeCompare(b.name));
+        this.registeredCandidates = response.sort((a, b) =>
+          a.name.localeCompare(b.name)
+        );
         this.filteredCandidates = [...this.registeredCandidates]; // Inicializar con todos
       },
       (error) => console.error("Error al obtener los candidatos", error)
@@ -631,47 +777,56 @@ export class CandidateFormComponent {
   // Método para eliminar el candidato seleccionado
   eliminarCandidato() {
     if (this.selectedCandidate) {
-      if (confirm(`¿Estás seguro de que deseas eliminar a ${this.selectedCandidate.name}?`)) {
-        this.candidateService.eliminarCandidato(this.selectedCandidate.id).subscribe(
-          () => {
-            // Eliminar el candidato del array local
-            this.registeredCandidates = this.registeredCandidates.filter(
-              (candidato) => candidato.id !== this.selectedCandidate?.id
-
-            );
-            Swal.fire("Éxito", "El candidato ha sido actualizado correctamente", "success");
-            this.closeEditModal();
-          },
-          (error) => {
-            Swal.fire("Error", "'Error al eliminar el candidato", "error");
-            console.error('Error al eliminar el candidato', error);
-          }
-        );
+      if (
+        confirm(
+          `¿Estás seguro de que deseas eliminar a ${this.selectedCandidate.name}?`
+        )
+      ) {
+        this.candidateService
+          .eliminarCandidato(this.selectedCandidate.id)
+          .subscribe(
+            () => {
+              // Eliminar el candidato del array local
+              this.registeredCandidates = this.registeredCandidates.filter(
+                (candidato) => candidato.id !== this.selectedCandidate?.id
+              );
+              Swal.fire(
+                "Éxito",
+                "El candidato ha sido actualizado correctamente",
+                "success"
+              );
+              this.closeEditModal();
+            },
+            (error) => {
+              Swal.fire("Error", "'Error al eliminar el candidato", "error");
+              console.error("Error al eliminar el candidato", error);
+            }
+          );
       }
     }
   }
 
-
-
   onPositionTypeChange() {
-
     this.candidate.subcharge = "";
     this.candidate.subcharge2 = "";
     //Agregar el selected candidate para cuadno van a modificar
-    if (this.candidate.charge === "Magistrados" || this.selectedCandidate.charge === "Magistrados") {
-      this.specificPositions = [
-        "Penal",
-        "Civil",
-        "Familiar",
-      ];
+    if (
+      this.candidate.charge === "Magistrados" ||
+      this.selectedCandidate.charge === "Magistrados"
+    ) {
+      this.specificPositions = ["Penal", "Civil", "Familiar"];
       //this.subcharge2 = []; // No hay segunda categoría para magistraturas
       //this.candidate.subcharge2 = ""; // Limpia el campo subcharge2
       //this.selectedCandidate.subcharge2 = ""; // Limpia el campo subcharge2 de modificacion
-    } else if (this.candidate.charge === "Tribunal" || this.selectedCandidate.charge === "Tribunal") {
-      this.specificPositions = [
-        "Disciplina Judicial",
-      ];
-    } else if (this.candidate.charge === "Juzgado" || this.selectedCandidate.charge === "Juzgado") {
+    } else if (
+      this.candidate.charge === "Tribunal" ||
+      this.selectedCandidate.charge === "Tribunal"
+    ) {
+      this.specificPositions = ["Disciplina Judicial"];
+    } else if (
+      this.candidate.charge === "Juzgado" ||
+      this.selectedCandidate.charge === "Juzgado"
+    ) {
       this.specificPositions = [
         "Penal",
         "Penal Tradicional",
@@ -688,17 +843,20 @@ export class CandidateFormComponent {
     }
 
     this.candidate.subcharge = "";
-    this.candidate.subcharge2 = ""; // Reinicia la selección 
+    this.candidate.subcharge2 = ""; // Reinicia la selección
     //reinicia seleccion en modificacion
     this.selectedCandidate.subcharge = "";
     this.selectedCandidate.subcharge2 = "";
   }
 
   onPositionTypeChange2() {
-
     //Agregar el selected candidate para cuadno van a modificar
-    if (this.candidate.subcharge === "Penal" || this.selectedCandidate.subcharge === "Penal"
-      || this.candidate.subcharge === "Control y Enjuiciamiento" || this.selectedCandidate.subcharge === "Control y Enjuiciamiento") {
+    if (
+      this.candidate.subcharge === "Penal" ||
+      this.selectedCandidate.subcharge === "Penal" ||
+      this.candidate.subcharge === "Control y Enjuiciamiento" ||
+      this.selectedCandidate.subcharge === "Control y Enjuiciamiento"
+    ) {
       this.subcharge2 = [
         "Sin Dato",
         "Juzgado de Control y Tribunal de Enjuiciamiento en Calera",
@@ -717,28 +875,41 @@ export class CandidateFormComponent {
         "Magistratura Primera Sala Penal",
         "Magistratura Segunda Sala Penal",
       ];
-    } else if (this.candidate.subcharge === "Civil" || this.selectedCandidate.subcharge === "Civil") {
-      this.subcharge2 = ["Sin Dato",
+    } else if (
+      this.candidate.subcharge === "Civil" ||
+      this.selectedCandidate.subcharge === "Civil"
+    ) {
+      this.subcharge2 = [
+        "Sin Dato",
         "Juzgado Primero Civil de Fresnillo",
         "Magistratura de Sala Familiar",
         "Magistratura de Sala Civil",
       ];
-    } else if (this.candidate.subcharge === "Familiar" || this.selectedCandidate.subcharge === "Familiar") {
+    } else if (
+      this.candidate.subcharge === "Familiar" ||
+      this.selectedCandidate.subcharge === "Familiar"
+    ) {
       this.subcharge2 = [
         "Sin Dato",
         "Juzgado Primero Familiar de Zacatecas",
         "Juzgado Tercero Familiar de Fresnillo",
         "Magistratura de Sala Familiar",
-
       ];
-    } else if (this.candidate.subcharge === "Mercantil" || this.selectedCandidate.subcharge === "Mercantil") {
+    } else if (
+      this.candidate.subcharge === "Mercantil" ||
+      this.selectedCandidate.subcharge === "Mercantil"
+    ) {
       this.subcharge2 = [
         "Sin Dato",
         "Juzgado Primero Mercantil de Fresnillo",
         "Juzgado Segundo Mercantil de Fresnillo",
         "Juzgado Tercero Mercantil de Zacatecas",
+        "Juzgado Tercero Mercantil de Fresnillo",
       ];
-    } else if (this.candidate.subcharge === "Mixto" || this.selectedCandidate.subcharge === "Mixto") {
+    } else if (
+      this.candidate.subcharge === "Mixto" ||
+      this.selectedCandidate.subcharge === "Mixto"
+    ) {
       this.subcharge2 = [
         "Sin Dato",
         "Juzgado Mixto de Concepción del Oro",
@@ -754,35 +925,45 @@ export class CandidateFormComponent {
         "Juzgado Segundo Mixto de Rio Grande",
         "Juzgado Segundo Mixto de Tlaltenango",
       ];
-    } else if (this.candidate.subcharge === "Adolescentes" || this.selectedCandidate.subcharge === "Adolescentes") {
+    } else if (
+      this.candidate.subcharge === "Adolescentes" ||
+      this.selectedCandidate.subcharge === "Adolescentes"
+    ) {
       this.subcharge2 = [
         "Sin Dato",
         "Juzgado Especial de Justicia para Adolescentes de Zacatecas",
       ];
-    } else if (this.candidate.subcharge === "Ejecucion de Sanciones" || this.selectedCandidate.subcharge === "Ejecucion de Sanciones") {
+    } else if (
+      this.candidate.subcharge === "Ejecucion de Sanciones" ||
+      this.selectedCandidate.subcharge === "Ejecucion de Sanciones"
+    ) {
       this.subcharge2 = [
         "Sin Dato",
         "Juzgado de Ejecución de Sanciones de Zacatecas",
         "Juzgado de Ejecución de Sanciones Penales de Zacatecas",
       ];
-    }
-    else if (this.candidate.subcharge === "Penal Tradicional" || this.selectedCandidate.subcharge === "Penal Tradicional") {
+    } else if (
+      this.candidate.subcharge === "Penal Tradicional" ||
+      this.selectedCandidate.subcharge === "Penal Tradicional"
+    ) {
       this.subcharge2 = [
         "Sin Dato",
         "Juzgado Penal Del Sistema Tradicional De La Region Centro Sur",
         "Juzgado Penal Del Sistema Tradicional De La Region Norte",
       ];
-    } else if (this.candidate.subcharge === "Sala Civil" || this.selectedCandidate.subcharge === "Sala Civil") {
+    } else if (
+      this.candidate.subcharge === "Sala Civil" ||
+      this.selectedCandidate.subcharge === "Sala Civil"
+    ) {
+      this.subcharge2 = ["Sin Dato", "Sala Segunda Civil"];
+    } else if (
+      this.candidate.subcharge === "Disciplina Judicial " ||
+      this.selectedCandidate.subcharge === "Disciplina Judicial"
+    ) {
       this.subcharge2 = [
         "Sin Dato",
-        "Sala Segunda Civil",
-      ];
-    } else if (this.candidate.subcharge === "Disciplina Judicial " || this.selectedCandidate.subcharge === "Disciplina Judicial") {
-      this.subcharge2 = [
-        "Sin Dato",
-        "Tribunal de Disciplina Jucicial",
-        "Magistratura del Tribunal de Disciplina Jucicial",
-
+        "Tribunal de Disciplina Judicial",
+        "Magistratura del Tribunal de Disciplina Judicial",
       ];
     }
 
@@ -797,7 +978,7 @@ export class CandidateFormComponent {
         icon: "error",
         title: "Oops...",
         text: "Debes completar al menos Nombre, Clave de Elector y Cargo.",
-        footer: '<a href="#">Ver más detalles</a>'
+        footer: '<a href="#">Ver más detalles</a>',
       });
       return;
     }
@@ -806,8 +987,6 @@ export class CandidateFormComponent {
     this.onSubmit();
   }
 
-
-
   isFormValid(): boolean {
     return !!(this.candidate.name && this.candidate.charge);
   }
@@ -815,7 +994,6 @@ export class CandidateFormComponent {
   isSubmitting = false;
 
   onSubmit() {
-
     //console.log("Entra al Onsubmint", this.isSubmitting);
 
     if (this.isSubmitting) return; // Evita que se envíe dos veces seguidas
@@ -830,7 +1008,7 @@ export class CandidateFormComponent {
         Swal.fire({
           title: "Muy Bien!",
           text: "La información se ha enviado!",
-          icon: "success"
+          icon: "success",
         });
         this.loadCandidates(); // Cargar los datos actualizados desde el backend
         // Limpiar todos los campos del formulario
@@ -856,10 +1034,7 @@ export class CandidateFormComponent {
       (error) => {
         console.error("Error al enviar candidato", error);
       }
-
-
     );
-
   }
 
   openEditModal(candidate: Candidate) {
@@ -876,11 +1051,16 @@ export class CandidateFormComponent {
   updateCandidate() {
     if (!this.selectedCandidate) return;
 
-    this.candidateService.updateCandidate(this.selectedCandidate.id, this.selectedCandidate)
+    this.candidateService
+      .updateCandidate(this.selectedCandidate.id, this.selectedCandidate)
       .subscribe(
         (response) => {
           console.log("Candidato actualizado:", response);
-          Swal.fire("Éxito", "El candidato ha sido actualizado correctamente", "success");
+          Swal.fire(
+            "Éxito",
+            "El candidato ha sido actualizado correctamente",
+            "success"
+          );
           this.loadCandidates(); // Recargar la tabla
           this.showEditModal = false; // Cerrar el modal
         },
@@ -893,43 +1073,31 @@ export class CandidateFormComponent {
 
   exportToExcel(): void {
     // Crear una nueva estructura con las columnas deseadas y nombres personalizados
-    const exportData = this.registeredCandidates.map(candidate => ({
-      'Nombre': candidate.name,
-      'Apellido Paterno': candidate.fathersLastName,
-      'Apellido Materno': candidate.mothersLastName,
-      'Clave de Elector': candidate.electoralKey,
-      'Correo Electrónico': candidate.email,
-      'Telefono': candidate.phone,
-      'Poder': candidate.power,
-      'Especialidad': candidate.subcharge,
-      'Cargo': candidate.subcharge2,
-      'Usuario': candidate.username,
-      'Contraseña': candidate.password
+    const exportData = this.registeredCandidates.map((candidate) => ({
+      Nombre: candidate.name,
+      "Apellido Paterno": candidate.fathersLastName,
+      "Apellido Materno": candidate.mothersLastName,
+      "Clave de Elector": candidate.electoralKey,
+      "Correo Electrónico": candidate.email,
+      Telefono: candidate.phone,
+      Poder: candidate.power,
+      Especialidad: candidate.subcharge,
+      Cargo: candidate.subcharge2,
+      Usuario: candidate.username,
+      Contraseña: candidate.password,
     }));
 
     // Crear una hoja de trabajo
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
 
     // Crear un libro de trabajo y agregar la hoja de trabajo
-    const workbook: XLSX.WorkBook = { Sheets: { 'Candidatos': worksheet }, SheetNames: ['Candidatos'] };
+    const workbook: XLSX.WorkBook = {
+      Sheets: { Candidatos: worksheet },
+      SheetNames: ["Candidatos"],
+    };
 
     // Guardar el archivo Excel
-    XLSX.writeFile(workbook, 'Registro Candidatos 2025.xlsx');
+    XLSX.writeFile(workbook, "Registro Candidatos 2025.xlsx");
   }
-  // 🔍 Filtrar candidatos según el término de búsqueda
-  filterCandidates() {
-    console.log("entra a filter:");
-    const searchLower = this.searchTerm.toLowerCase().trim(); // Normaliza el texto
 
-    if (!searchLower) {
-      this.filteredCandidates = [...this.registeredCandidates]; // Restaura lista completa
-      return;
-    }
-
-    this.filteredCandidates = this.registeredCandidates.filter(candidate =>
-      candidate.name.toLowerCase().includes(searchLower) ||
-      candidate.fathersLastName.toLowerCase().includes(searchLower) ||
-      candidate.mothersLastName.toLowerCase().includes(searchLower)
-    );
-  }
 }
