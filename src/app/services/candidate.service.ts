@@ -7,8 +7,8 @@ import { Candidate } from '../models/candidate';
   providedIn: 'root'
 })
 export class CandidateService {
-  private apiUrl = 'https://sistemas/registro_candidatura/api/v1/candidates'; //  produccion
-  //private apiUrl = 'http://localhost:3012/registro_candidatura/api/v1/candidates'; //local
+  //private apiUrl = 'https://sistemas/registro_candidatura/api/v1/candidates'; //  produccion
+  private apiUrl = 'http://localhost:3012/registro_candidatura/api/v1/candidates'; //local
 
   constructor(private http: HttpClient) {}
   // Método para enviar un candidato al backend

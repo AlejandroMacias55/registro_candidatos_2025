@@ -176,12 +176,19 @@ import "datatables.net";
           <button class="excel-btn" (click)="exportToExcel()">
             <i class="fa-solid fa-file-excel icon"></i> Descargar Excel
           </button>
-
+          <input 
+    type="text" 
+    class="search-input" 
+    placeholder="🔍 Buscar por nombre..." 
+    [(ngModel)]="searchTerm"
+    (input)="filterCandidates()"
+  />
           <button class="reload-btn" (click)="loadCandidates()">
             <i class="fa-solid fa-rotate-right icon"></i> Actualizar Tabla
           </button>
+         
         </div>
-        <table datatable class="row-border hover">
+        <table class="table">
           <thead>
             <tr>
               <th>Acciones</th>
@@ -342,7 +349,7 @@ import "datatables.net";
               </select>
             </div>
 
-            <div class="form-group" *ngIf="selectedCandidate.charge">
+            <div class="form-group" >
               <label for="editsubcharge">Materia</label>
               <select
                 id="editsubcharge"
@@ -362,7 +369,7 @@ import "datatables.net";
               </select>
             </div>
 
-            <div class="form-group" *ngIf="selectedCandidate.subcharge">
+            <div class="form-group" >
               <label for="editsubcharge2">Distrito</label>
               <select
                 id="editsubcharge2"
@@ -400,114 +407,11 @@ import "datatables.net";
       </div>
     </div>
   `,
-  styles: [
-    
-    `
-     /* Estilos base para la tabla */
-     table.dataTable {
-      width: 100% !important;
-      margin: 0 auto;
-      clear: both;
-      border-collapse: separate;
-      border-spacing: 0;
-    }
-      /* Cabecera de la tabla */
-      table.dataTable thead th {
-      background: linear-gradient(135deg,rgb(154, 182, 218) 0%,rgb(59, 122, 199) 100%);
-      color: white;
-      font-weight: 600;
-      padding: 12px 15px;
-      border: none;
-      position: relative;
-    }
-    /* Efecto hover para cabeceras */
-    table.dataTable thead th:hover {
-      background: linear-gradient(135deg,rgb(136, 173, 219) 0%,rgb(76, 143, 231) 100%);
-    }
+  styles: [ `
+  
 
-    /* Celdas del cuerpo */
-    table.dataTable tbody td {
-      padding: 10px 15px;
-      vertical-align: middle;
-      border-bottom: 1px solid #e9ecef;
-      transition: all 0.3s ease;
-    }
-     /* Filas alternas */
-     table.dataTable tbody tr:nth-child(even) {
-      background-color:rgb(232, 236, 238);
-    }
 
-    /* Efecto hover para filas */
-    table.dataTable tbody tr:hover td {
-      background-color: #e9f0fb;
-      transform: scale(1.01);
-      box-shadow: 0 2px 8px rgba(44, 123, 229, 0.1);
-    }
-    
-    /* Botones de acción */
-    .btn-warning {
-      background-color:rgb(245, 201, 68);
-      color: #212529;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
 
-    .btn-warning:hover {
-      background-color: #e0a800;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    }
-
-    /* Paginación */
-    .dataTables_wrapper .dataTables_paginate .paginate_button {
-      border: 1px solid #dee2e6;
-      padding: 6px 12px;
-      margin-left: 0;
-      border-radius: 4px;
-      transition: all 0.3s ease;
-    }
-
-    .dataTables_wrapper .dataTables_paginate .paginate_button.current,
-    .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
-      background: linear-gradient(135deg, #2c7be5 0%, #1a4d8c 100%);
-      color: white !important;
-      border: 1px solid #2c7be5;
-    }
-
-    /* Barra de búsqueda */
-    .dataTables_filter input {
-      border: 1px solid #dee2e6;
-      border-radius: 20px;
-      padding: 8px 15px;
-      margin-left: 10px;
-      transition: all 0.3s ease;
-    }
-
-    .dataTables_filter input:focus {
-      border-color: #2c7be5;
-      box-shadow: 0 0 0 0.2rem rgba(44, 123, 229, 0.25);
-      outline: none;
-    }
-
-    /* Selector de cantidad de registros */
-    .dataTables_length select {
-      border: 1px solid #dee2e6;
-      border-radius: 4px;
-      padding: 6px;
-    }
-
-    /* Contenedor de la tabla */
-    .table-container {
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      padding: 20px;
-      margin-top: 20px;
-    }
      /* Efecto de carga */
      @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
@@ -732,6 +636,7 @@ export class CandidateFormComponent {
   };
 
   showEditModal = false;
+  
   selectedCandidate: Candidate = {
     id: 0,
     name: "",
@@ -772,6 +677,7 @@ export class CandidateFormComponent {
       },
       (error) => console.error("Error al obtener los candidatos", error)
     );
+    
   }
 
   // Método para eliminar el candidato seleccionado
@@ -807,8 +713,11 @@ export class CandidateFormComponent {
   }
 
   onPositionTypeChange() {
+    
     this.candidate.subcharge = "";
     this.candidate.subcharge2 = "";
+    this.selectedCandidate.subcharge="";
+    this.selectedCandidate.subcharge2="";
     //Agregar el selected candidate para cuadno van a modificar
     if (
       this.candidate.charge === "Magistrados" ||
@@ -850,6 +759,7 @@ export class CandidateFormComponent {
   }
 
   onPositionTypeChange2() {
+    
     //Agregar el selected candidate para cuadno van a modificar
     if (
       this.candidate.subcharge === "Penal" ||
@@ -957,7 +867,7 @@ export class CandidateFormComponent {
     ) {
       this.subcharge2 = ["Sin Dato", "Sala Segunda Civil"];
     } else if (
-      this.candidate.subcharge === "Disciplina Judicial " ||
+      this.candidate.subcharge === "Disciplina Judicial" ||
       this.selectedCandidate.subcharge === "Disciplina Judicial"
     ) {
       this.subcharge2 = [
@@ -965,10 +875,17 @@ export class CandidateFormComponent {
         "Tribunal de Disciplina Judicial",
         "Magistratura del Tribunal de Disciplina Judicial",
       ];
+    } else if (
+      this.candidate.subcharge === "" ||
+      this.selectedCandidate.subcharge === ""
+    ) {
+      this.subcharge2 = [
+        "Seleccione un cargo"
+      ];
     }
 
     this.candidate.subcharge2 = "";
-    //limpiar subcharge2 de midificacion
+    //limpiar subcharge2 de modificacion
     this.selectedCandidate.subcharge2 = "";
   }
 
@@ -1040,6 +957,9 @@ export class CandidateFormComponent {
   openEditModal(candidate: Candidate) {
     console.log("entra al edit modal");
     this.selectedCandidate = { ...candidate };
+    this.selectedCandidate.charge="";
+    this.selectedCandidate.subcharge="";
+    this.selectedCandidate.subcharge2="";
     this.showEditModal = true;
     console.log(this.showEditModal);
   }
@@ -1049,8 +969,9 @@ export class CandidateFormComponent {
   }
 
   updateCandidate() {
-    if (!this.selectedCandidate) return;
+    
 
+    if (!this.selectedCandidate) return;
     this.candidateService
       .updateCandidate(this.selectedCandidate.id, this.selectedCandidate)
       .subscribe(
@@ -1098,6 +1019,23 @@ export class CandidateFormComponent {
 
     // Guardar el archivo Excel
     XLSX.writeFile(workbook, "Registro Candidatos 2025.xlsx");
+  }
+
+  // 🔍 Filtrar candidatos según el término de búsqueda
+  filterCandidates() {
+    console.log("entra a filter:");
+    const searchLower = this.searchTerm.toLowerCase().trim(); // Normaliza el texto
+
+    if (!searchLower) {
+      this.filteredCandidates = [...this.registeredCandidates]; // Restaura lista completa
+      return;
+    }
+
+    this.filteredCandidates = this.registeredCandidates.filter(candidate =>
+      candidate.name.toLowerCase().includes(searchLower) ||
+      candidate.fathersLastName.toLowerCase().includes(searchLower) ||
+      candidate.mothersLastName.toLowerCase().includes(searchLower)
+    );
   }
 
 }
